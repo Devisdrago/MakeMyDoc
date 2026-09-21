@@ -7,7 +7,7 @@ screenshots the active window, highlights what you clicked, and lets you clean t
 
 ![A step exported by MakeMyDoc: text bar, highlighted button, password field blurred](docs/assets/step-example.png)
 
-**[Landing page]([docs/index.html](https://devisdrago.github.io/MakeMyDoc/))** (published with GitHub Pages) &middot; **[Example exported guide (PDF)](docs/assets/example-guide.pdf)**
+**[Landing page](https://devisdrago.github.io/MakeMyDoc/)** (published with GitHub Pages) &middot; **[Example exported guide (PDF)](docs/assets/example-guide.pdf)**
 
 ## Download
 
