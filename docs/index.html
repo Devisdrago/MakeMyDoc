@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MakeMyDoc - step-by-step guides from your clicks</title>
+<meta name="description" content="MakeMyDoc is a free, open-source Windows app that records your clicks and typing and turns them into a step-by-step guide. Export to PDF, Markdown or HTML.">
+<meta property="og:title" content="MakeMyDoc - step-by-step guides from your clicks">
+<meta property="og:description" content="Record a task once. Get a clean guide with screenshots, highlights and zoom insets. Free and open source for Windows.">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<style>
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --surface-2:#f0f2f5; --border:#e2e5ea;
+  --fg:#1b1d21; --muted:#5b6270; --accent:#005fb8; --accent-fg:#ffffff; --accent-soft:#e7f1fb;
+  --ok:#0f7b0f; --shadow:0 1px 2px rgba(16,24,40,.06),0 8px 24px rgba(16,24,40,.08);
+  --radius:12px;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#16181c; --surface:#202328; --surface-2:#2a2e35; --border:#353a42;
+    --fg:#f3f4f6; --muted:#a3abb8; --accent:#60cdff; --accent-fg:#00263d; --accent-soft:#1c3346;
+    --ok:#6ccb5f; --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);
+  font:16px/1.6 "Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+img{max-width:100%;height:auto;display:block}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+
+/* header */
+header.site{position:sticky;top:0;z-index:10;backdrop-filter:saturate(1.4) blur(14px);
+  background:color-mix(in srgb,var(--bg) 82%,transparent);border-bottom:1px solid var(--border)}
+header.site .wrap{display:flex;align-items:center;gap:20px;height:60px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.05rem;color:var(--fg);text-decoration:none}
+.brand img{width:28px;height:28px}
+nav.links{display:flex;gap:4px;margin-left:auto;align-items:center}
+nav.links a{color:var(--muted);text-decoration:none;padding:8px 12px;border-radius:8px;font-size:.95rem}
+nav.links a:hover{background:var(--surface-2);color:var(--fg)}
+@media(max-width:760px){nav.links a.hide-sm{display:none}}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border-radius:8px;font-weight:600;
+  text-decoration:none;border:1px solid var(--border);background:var(--surface);color:var(--fg);font-size:1rem}
+.btn:hover{background:var(--surface-2)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.small{padding:7px 14px;font-size:.92rem}
+
+/* hero */
+.hero{padding:72px 0 40px}
+.hero-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:48px;align-items:center}
+@media(max-width:900px){.hero-grid{grid-template-columns:1fr}}
+.eyebrow{display:inline-block;background:var(--accent-soft);color:var(--accent);font-weight:600;font-size:.85rem;
+  padding:5px 12px;border-radius:999px;margin-bottom:18px}
+h1{font-size:clamp(2.1rem,4.6vw,3.3rem);line-height:1.12;margin:0 0 18px;letter-spacing:-.02em}
+.lead{font-size:1.15rem;color:var(--muted);margin:0 0 28px;max-width:34em}
+.cta{display:flex;flex-wrap:wrap;gap:12px}
+.fine{color:var(--muted);font-size:.9rem;margin-top:14px}
+figure{margin:0}
+.shot{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.shot img{width:100%}
+figcaption{color:var(--muted);font-size:.9rem;margin-top:10px}
+
+/* sections */
+section{padding:56px 0}
+h2{font-size:clamp(1.5rem,3vw,2rem);letter-spacing:-.01em;margin:0 0 10px}
+.sub{color:var(--muted);margin:0 0 32px;max-width:40em}
+.grid{display:grid;gap:16px}
+.g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:900px){.g3{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.g3{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px}
+.card h3{margin:0 0 6px;font-size:1.05rem}
+.card p{margin:0;color:var(--muted);font-size:.96rem}
+.num{width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--accent-fg);display:grid;place-items:center;
+  font-weight:700;margin-bottom:14px}
+.icon{width:38px;height:38px;border-radius:10px;background:var(--accent-soft);color:var(--accent);display:grid;
+  place-items:center;font-size:1.15rem;margin-bottom:14px}
+.band{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+
+/* screenshots */
+.gallery{display:grid;gap:28px;grid-template-columns:1fr 1fr;align-items:start}
+@media(max-width:800px){.gallery{grid-template-columns:1fr}}
+.gallery .wide{grid-column:1/-1}
+.gallery .narrow{max-width:420px}
+
+/* install / faq */
+pre{background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:16px;overflow:auto;
+  font:.9rem/1.55 ui-monospace,Consolas,"Cascadia Mono",monospace;margin:12px 0 0}
+details{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:4px 18px;margin-bottom:10px}
+summary{cursor:pointer;font-weight:600;padding:12px 0;list-style-position:outside}
+details p{margin:0 0 14px;color:var(--muted)}
+.cols{display:grid;gap:16px;grid-template-columns:1fr 1fr}
+@media(max-width:800px){.cols{grid-template-columns:1fr}}
+footer{padding:36px 0 56px;color:var(--muted);font-size:.92rem;border-top:1px solid var(--border)}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:space-between}
+kbd{background:var(--surface-2);border:1px solid var(--border);border-bottom-width:2px;border-radius:6px;padding:1px 7px;font-size:.85em}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="assets/icon.png" alt="" width="28" height="28">MakeMyDoc</a>
+    <nav class="links" aria-label="Main">
+      <a class="hide-sm" href="#how">How it works</a>
+      <a class="hide-sm" href="#features">Features</a>
+      <a class="hide-sm" href="#screenshots">Screenshots</a>
+      <a class="hide-sm" href="#faq">FAQ</a>
+      <a class="btn small" data-gh="" href="https://github.com/">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+<div class="hero"><div class="wrap hero-grid">
+  <div>
+    <span class="eyebrow">Free &middot; Open source &middot; For Windows</span>
+    <h1>Turn what you do on screen into a step-by-step guide.</h1>
+    <p class="lead">Press <strong>Start</strong>, do your task, press <strong>Stop</strong>. MakeMyDoc records your clicks and typing,
+      screenshots the window, highlights what you clicked and exports a clean guide as PDF, Markdown or HTML.</p>
+    <div class="cta">
+      <a class="btn primary" data-gh="/releases/latest" href="https://github.com/">Download for Windows</a>
+      <a class="btn" data-gh="" href="https://github.com/">View on GitHub</a>
+    </div>
+    <p class="fine">No account. No cloud. Everything stays on your PC.</p>
+  </div>
+  <figure>
+    <div class="shot"><img src="assets/step-example.png" alt="An exported step: a dark text bar reading 'Click Sign in', the button highlighted in red, and the password field blurred" width="577" height="491"></div>
+    <figcaption>One real step, exactly as exported: text bar, highlighted button, and the password field blurred automatically.</figcaption>
+  </figure>
+</div></div>
+
+<section id="how" class="band"><div class="wrap">
+  <h2>Record once. Share a polished guide.</h2>
+  <p class="sub">Documenting a process should not take longer than doing it.</p>
+  <div class="grid g3">
+    <div class="card"><div class="num">1</div><h3>Record</h3>
+      <p>Click Start and work as usual. Every click and every group of typed text becomes a step, with a screenshot of the active window. Pause or stop with a hotkey or the small REC badge.</p></div>
+    <div class="card"><div class="num">2</div><h3>Review and edit</h3>
+      <p>See every step as a card. Fix the wording, reorder, delete, crop, draw arrows, blur anything sensitive, and add notes or warnings wherever you need them.</p></div>
+    <div class="card"><div class="num">3</div><h3>Export</h3>
+      <p>Save a PDF, a Markdown file for GitHub, or a single self-contained HTML page. Steps are numbered automatically and each one is a screenshot with its description on top.</p></div>
+  </div>
+</div></section>
+
+<section id="features"><div class="wrap">
+  <h2>Everything a good how-to needs</h2>
+  <p class="sub">Small, fast, and built for the boring part of documentation.</p>
+  <div class="grid g3">
+    <div class="card"><div class="icon">&#9998;</div><h3>Clicks and typing, captured</h3>
+      <p>Left, right and double clicks, plus typed text grouped into one step between clicks. Shortcuts like Ctrl+S are recorded too.</p></div>
+    <div class="card"><div class="icon">&#128444;</div><h3>Active-window screenshots</h3>
+      <p>Only the window you are working in, not your whole desktop. Menus and drop-downs that stick out of the window are included.</p></div>
+    <div class="card"><div class="icon">&#127919;</div><h3>Highlights what you clicked</h3>
+      <p>Uses Windows UI Automation to find the element's name and outline, so the text reads "Left click on: Save" and the button is highlighted.</p></div>
+    <div class="card"><div class="icon">&#128269;</div><h3>Zoom inset</h3>
+      <p>A magnified crop of the clicked area sits beside or below the screenshot, so small buttons are easy to spot.</p></div>
+    <div class="card"><div class="icon">&#128274;</div><h3>Passwords protected</h3>
+      <p>Password fields are detected and blurred before the screenshot is saved, and what you type into them is never stored.</p></div>
+    <div class="card"><div class="icon">&#9986;</div><h3>A real editor</h3>
+      <p>Crop, highlight, circle, arrow, blur, warning marks and callouts, plus notes and warnings between steps. Undo as many steps as you need.</p></div>
+    <div class="card"><div class="icon">&#128196;</div><h3>PDF, Markdown, HTML</h3>
+      <p>Title page, numbered steps, and GitHub-friendly Markdown. The HTML export is one file you can email.</p></div>
+    <div class="card"><div class="icon">&#9881;</div><h3>Your wording, once</h3>
+      <p>Change "Left click on:" a single time and every step follows. Edit any single description by hand whenever you like.</p></div>
+    <div class="card"><div class="icon">&#128737;</div><h3>Private by design</h3>
+      <p>No account, no cloud, no tracking. Your recordings never leave your computer unless you share the exported file.</p></div>
+  </div>
+</div></section>
+
+<section id="screenshots" class="band"><div class="wrap">
+  <h2>A modern Windows 11 look</h2>
+  <p class="sub">Light or dark to match your system, with a title bar that blends in.</p>
+  <div class="gallery">
+    <figure class="wide"><div class="shot"><img src="assets/app-review.png" alt="The review window: a step card with the screenshot, a description box under it, and buttons to reorder, edit and delete" width="1080" height="800" loading="lazy"></div>
+      <figcaption>Review: every step is a card. Edit the description under the picture, reorder, or add notes and warnings.</figcaption></figure>
+    <figure><div class="shot"><img src="assets/app-editor.png" alt="The image editor with tools for highlight, circle, arrow, blur, warning, callout and crop" width="1081" height="585" loading="lazy"></div>
+      <figcaption>Edit image: crop, highlight, arrows, blur, warnings and callouts.</figcaption></figure>
+    <figure class="narrow"><div class="shot"><img src="assets/app-control.png" alt="The small control window with Start, Pause and Stop buttons" width="408" height="369" loading="lazy"></div>
+      <figcaption>Control window: Start, Pause, Stop. It hides to the tray while you record.</figcaption></figure>
+  </div>
+  <p style="margin-top:28px">See a complete exported guide:
+    <a href="assets/example-guide.pdf">PDF</a> &middot; <a href="assets/example-guide.html">HTML</a></p>
+</div></section>
+
+<section id="install"><div class="wrap">
+  <h2>Get it</h2>
+  <p class="sub">Two ways to run MakeMyDoc.</p>
+  <div class="cols">
+    <div class="card"><h3>Download the app</h3>
+      <p>Grab <strong>MakeMyDoc.exe</strong> from the latest release and run it. No installer, no Python needed.</p>
+      <p style="margin-top:14px"><a class="btn primary" data-gh="/releases/latest" href="https://github.com/">Latest release</a></p>
+      <p class="fine" style="margin-top:12px">The app is not code-signed, so Windows SmartScreen may warn on first run: choose <em>More info</em>, then <em>Run anyway</em>.</p></div>
+    <div class="card"><h3>Run from source</h3>
+      <p>Needs Python 3.11 or newer.</p>
+<pre>git clone &lt;repo-url&gt; MakeMyDoc
+cd MakeMyDoc
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+python run.py</pre></div>
+  </div>
+</div></section>
+
+<section id="faq" class="band"><div class="wrap">
+  <h2>Questions</h2>
+  <p class="sub">&nbsp;</p>
+  <details><summary>Is it really free?</summary><p>Yes. MakeMyDoc is open source under the MIT license: free to use, change and share.</p></details>
+  <details><summary>Does anything get uploaded?</summary><p>No. Recording, editing and exporting all happen on your computer. There is no account and the app makes no network requests.</p></details>
+  <details><summary>How are passwords handled?</summary><p>Password fields are found through Windows UI Automation and blurred before the screenshot is written to disk. Characters typed into them are never stored; the step just says the text is hidden. A few custom-drawn password boxes are not exposed to Windows, so blur those yourself with the Blur tool in the editor.</p></details>
+  <details><summary>Can it record apps that run as administrator?</summary><p>Windows blocks a normal program from seeing an elevated app. MakeMyDoc detects this and warns you; use <em>Tools &gt; Restart as administrator</em> and it can record them.</p></details>
+  <details><summary>Which hotkeys are there?</summary><p><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> pauses or resumes, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> stops. You can change both in the settings. The clicks you make on MakeMyDoc's own buttons are never recorded.</p></details>
+  <details><summary>Which Windows versions work?</summary><p>MakeMyDoc is built and tested on Windows 11. Windows 10 should work too, but it has not been tested there, and the rounded title bars are a Windows 11 feature.</p></details>
+</div></section>
+
+</main>
+
+<footer><div class="wrap">
+  <span>MakeMyDoc &middot; MIT License</span>
+  <span><a data-gh="" href="https://github.com/">Source on GitHub</a> &middot; <a data-gh="/issues" href="https://github.com/">Report an issue</a></span>
+</div></footer>
+
+<script>
+/* When served from GitHub Pages (owner.github.io/repo) point the links at that repository. */
+(function () {
+  var m = location.hostname.match(/^([^.]+)\.github\.io$/);
+  var repo = location.pathname.split("/").filter(Boolean)[0];
+  if (!m || !repo) return;
+  var base = "https://github.com/" + m[1] + "/" + repo;
+  document.querySelectorAll("a[data-gh]").forEach(function (a) {
+    a.href = base + a.getAttribute("data-gh");
+  });
+  document.querySelectorAll("pre").forEach(function (p) {
+    p.innerHTML = p.innerHTML.replace("&lt;repo-url&gt;", base + ".git");
+  });
+})();
+</script>
+</body>
+</html>

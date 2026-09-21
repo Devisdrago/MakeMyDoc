@@ -1,0 +1,7 @@
+pynput>=1.7.6
+uiautomation>=2.0.18
+mss>=9.0.1
+Pillow>=10.1.0
+fpdf2>=2.7.9
+pystray>=0.19.5
+sv-ttk>=2.6

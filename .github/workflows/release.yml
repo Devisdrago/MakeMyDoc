@@ -1,0 +1,31 @@
+name: Release
+
+# Push a tag such as v1.0.0 to build MakeMyDoc.exe and attach it to a GitHub release.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+      - name: Test
+        run: pytest -q
+      - name: Build exe
+        run: pyinstaller MakeMyDoc.spec --noconfirm
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/MakeMyDoc.exe
+          generate_release_notes: true
